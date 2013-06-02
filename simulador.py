@@ -1,10 +1,7 @@
 from collections import deque
 from eventos import *
 from util import var_exp
-
-def inserir_ordenado(eventos, evento):
-    eventos.append(evento)
-    sorted(eventos, key=lambda evt: evt.quando)
+from exceptions import EOFError
 
 class Simulador:
     tempo = 0.0
@@ -18,6 +15,10 @@ class Simulador:
     def __init__(self, tx_chegada, tx_saida):
         self.tx_chegada = tx_chegada
         self.tx_saida = tx_saida
+    
+    def inserir_ordenado(self, evento):
+        self.eventos.append(evento)
+        self.eventos = sorted(self.eventos, key=lambda evt: evt.quando)
         
     def gerar_proxima_chegada(self, cliente):
         quando = self.tempo + var_exp(self.tx_chegada)
@@ -29,9 +30,11 @@ class Simulador:
         
     def criar_novo_cliente(self):
         self.total_clientes = self.total_clientes + 1
+        print 'Criando novo cliente %d' % self.total_clientes
         return Cliente(self.total_clientes)
         
     def imprimir_estado(self):
+        print '###################################'
         print 'Estado do simulador:'
         print '- Tempo Atual: %f', self.tempo
         print '- Total clientes: %d' % self.total_clientes
@@ -40,40 +43,43 @@ class Simulador:
         print map(lambda evt:'%s' % str(evt), self.eventos)
         print '- Fila'
         print map(lambda client:'%s' % str(client), self.fila)
+        print '###################################'
     
     def simular(self):
         print 'Iniciando simulacao'
         
-        cliente = self.criar_novo_cliente()
-        inserir_ordenado(self.eventos, self.gerar_proxima_chegada(cliente))
+        primeiro_cliente = self.criar_novo_cliente()
+        self.inserir_ordenado(self.gerar_proxima_chegada(primeiro_cliente))
         
         while (True):
             evento = self.eventos.pop(0)
             
-            if isinstance(evento, EventoChegada):        
-                # quem chegou
-                cliente = evento.cliente
-                cliente.chegou = self.tempo
-                
-                # inserindo cliente na fila
-                self.fila.append(cliente)
-                
+            if isinstance(evento, EventoChegada):
                 # avancando o tempo
                 self.tempo = evento.quando
                 
-                print 'Alguem chegou  %s as %f' % (cliente, evento.quando)
+                # quem chegou
+                evento.cliente.chegou = self.tempo
+                
+                # inserindo cliente na fila
+                self.fila.append(evento.cliente)
+                                
+                print 'Alguem chegou  %s as %f' % (evento.cliente, evento.quando)
                 
                 # gerando a proxima chegada
-                inserir_ordenado(self.eventos, self.gerar_proxima_chegada(self.criar_novo_cliente()))
+                self.inserir_ordenado(self.gerar_proxima_chegada(self.criar_novo_cliente()))
                 
             elif isinstance(evento, EventoSaida):
+                # avancando o tempo
+                self.tempo = evento.quando
+                
                 # quem esta saindo
                 evento.cliente.saiu = self.tempo
                 
                 # servidor nao esta mais ocupado
                 self.servidor_ocupado = False
                 
-                print 'Alguem saiu  %s as %f' % (cliente, evento.quando)
+                print 'Alguem saiu  %s as %f' % (evento.cliente, evento.quando)
             
             if len(self.fila) != 0 and not self.servidor_ocupado:
                 cliente = self.fila.popleft()
@@ -81,11 +87,13 @@ class Simulador:
                 print 'Servidor atendendo a %s as %f' % (cliente, self.tempo)
                 
                 cliente.atendido = self.tempo
-                inserir_ordenado(self.eventos, self.gerar_proxima_saida(cliente))
+                self.inserir_ordenado(self.gerar_proxima_saida(cliente))
+                
+                self.servidor_ocupado = True
             
             self.imprimir_estado()
                         
             try:
                 raw_input('Qualquer tecla para a proxima iteracao...')
-            except exceptions.EOFError:
+            except EOFError:
                 pass
