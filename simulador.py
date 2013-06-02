@@ -46,7 +46,9 @@ class Simulador:
         print '###################################'
     
     def simular(self):
-        print 'Iniciando simulacao'
+        print '# Iniciando simulacao'
+        print '# Taxa de chegadas: %f' % self.tx_chegada
+        print '# Taxa de servico: %f' % self.tx_saida
         
         primeiro_cliente = self.criar_novo_cliente()
         self.inserir_ordenado(self.gerar_proxima_chegada(primeiro_cliente))
