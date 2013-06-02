@@ -1,24 +1,10 @@
-from random import random
-from numpy import log
 from collections import deque
 from eventos import *
-
-def uniforme():
-    return random()
-    
-def var_exp(taxa):
-    return -1 * log(uniforme()) / taxa
-
-def tx_chegada(ro, mi):
-    return ro * mi
-
-tx_saida = 0.1
-txs_chegadas = [ tx_chegada(0.5, tx_saida), tx_chegada(0.7, tx_saida), tx_chegada(0.9, tx_saida) ]
+from util import var_exp
 
 def inserir_ordenado(eventos, evento):
     eventos.append(evento)
     sorted(eventos, key=lambda evt: evt.quando)
-
 
 class Simulador:
     tempo = 0.0
@@ -103,5 +89,3 @@ class Simulador:
                 raw_input('Qualquer tecla para a proxima iteracao...')
             except exceptions.EOFError:
                 pass
-        
-Simulador(txs_chegadas[0], tx_saida).simular()

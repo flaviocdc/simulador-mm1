@@ -22,7 +22,6 @@ class EventoAdicionarFila(Evento):
 class EventoSaiuFila(Evento):    
     def __str__(self):
         return 'EventoAdicionarFila[cliente=%s, quando=%f]' % (self.cliente, self.quando)
-
 class Cliente:
     chegou = 0
     atendido = 0
