@@ -11,6 +11,7 @@ class Simulador:
     tx_saida = 0.0
     total_clientes = 0
     servidor_ocupado = False
+    debug = False
     
     def __init__(self, tx_chegada, tx_saida):
         self.tx_chegada = tx_chegada
@@ -36,7 +37,7 @@ class Simulador:
     def imprimir_estado(self):
         print '###################################'
         print 'Estado do simulador:'
-        print '- Tempo Atual: %f', self.tempo
+        print '- Tempo Atual: %f' % self.tempo
         print '- Total clientes: %d' % self.total_clientes
         print '- Servidor ocupado: %s' % self.servidor_ocupado
         print '- Eventos a processar'
@@ -46,14 +47,15 @@ class Simulador:
         print '###################################'
     
     def simular(self):
-        print '# Iniciando simulacao'
-        print '# Taxa de chegadas: %f' % self.tx_chegada
-        print '# Taxa de servico: %f' % self.tx_saida
+        if self.debug:
+            print '# Iniciando simulacao'
+            print '# Taxa de chegadas: %f' % self.tx_chegada
+            print '# Taxa de servico: %f' % self.tx_saida
         
         primeiro_cliente = self.criar_novo_cliente()
         self.inserir_ordenado(self.gerar_proxima_chegada(primeiro_cliente))
         
-        while (True):
+        while (self.tempo <= 10000):
             evento = self.eventos.pop(0)
             
             if isinstance(evento, EventoChegada):
@@ -65,8 +67,9 @@ class Simulador:
                 
                 # inserindo cliente na fila
                 self.fila.append(evento.cliente)
-                                
-                print 'Alguem chegou  %s as %f' % (evento.cliente, evento.quando)
+
+                if self.debug:
+                    print 'Alguem chegou  %s as %f' % (evento.cliente, evento.quando)
                 
                 # gerando a proxima chegada
                 self.inserir_ordenado(self.gerar_proxima_chegada(self.criar_novo_cliente()))
@@ -81,21 +84,27 @@ class Simulador:
                 # servidor nao esta mais ocupado
                 self.servidor_ocupado = False
                 
-                print 'Alguem saiu  %s as %f' % (evento.cliente, evento.quando)
+                if self.debug:
+                    print 'Alguem saiu  %s as %f' % (evento.cliente, evento.quando)
             
             if len(self.fila) != 0 and not self.servidor_ocupado:
                 cliente = self.fila.popleft()
                 
-                print 'Servidor atendendo a %s as %f' % (cliente, self.tempo)
+                if self.debug:
+                    print 'Servidor atendendo a %s as %f' % (cliente, self.tempo)
                 
                 cliente.atendido = self.tempo
                 self.inserir_ordenado(self.gerar_proxima_saida(cliente))
                 
                 self.servidor_ocupado = True
             
-            self.imprimir_estado()
+            if self.debug:
+                self.imprimir_estado()
                         
             try:
-                raw_input('Qualquer tecla para a proxima iteracao...')
+                if self.debug:
+                    raw_input('Qualquer tecla para a proxima iteracao...')
             except EOFError:
                 pass
+
+        self.imprimir_estado()
