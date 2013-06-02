@@ -1,4 +1,4 @@
-from random import uniform
+from numpy.random import uniform
 from numpy import log
 
 def var_exp(taxa):
