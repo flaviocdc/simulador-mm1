@@ -31,6 +31,12 @@ class Cliente:
     
     def __init__(self, nome):
         self.nome = 'Cliente-%d' % nome
-    
+
     def __str__(self):
         return self.nome
+
+    def tempo_espera(self):
+        return self.atendido - self.chegou
+
+    def tempo_servico(self):
+        return self.saiu - self.atendido

@@ -5,13 +5,19 @@ from exceptions import EOFError
 
 class Simulador:
     tempo = 0.0
-    eventos = []
-    fila = deque()
     tx_chegada = 0.0
     tx_saida = 0.0
+    eventos = []
+    fila = deque()
     total_clientes = 0
     servidor_ocupado = False
     debug = False
+    
+    todos_clientes_atendidos = []
+    
+    amostras = []
+    clientes_atendidos_rodada = []
+    rodada = 0
     
     def __init__(self, tx_chegada, tx_saida):
         self.tx_chegada = tx_chegada
@@ -31,7 +37,10 @@ class Simulador:
         
     def criar_novo_cliente(self):
         self.total_clientes = self.total_clientes + 1
-        print 'Criando novo cliente %d' % self.total_clientes
+
+        if self.debug:
+            print 'Criando novo cliente %d' % self.total_clientes
+
         return Cliente(self.total_clientes)
         
     def imprimir_estado(self):
@@ -44,6 +53,8 @@ class Simulador:
         print map(lambda evt:'%s' % str(evt), self.eventos)
         print '- Fila'
         print map(lambda client:'%s' % str(client), self.fila)
+        print '- Amostras %s' % self.amostras
+        print '- Rodada %d' % self.rodada
         print '###################################'
     
     def simular(self):
@@ -58,6 +69,17 @@ class Simulador:
         while (self.tempo <= 10000):
             evento = self.eventos.pop(0)
             
+            self.rodada = self.rodada + 1
+            
+            if self.rodada % 100 == 0:
+                amostra = (reduce(lambda x, cliente: x + cliente.tempo_espera(), self.clientes_atendidos_rodada, 0)) / len(self.clientes_atendidos_rodada)
+                
+                # guardando a amostra
+                self.amostras.append(amostra)
+                
+                # limpando os clientes atendidos nesta rodada
+                self.clientes_atendidos_rodada = []
+
             if isinstance(evento, EventoChegada):
                 # avancando o tempo
                 self.tempo = evento.quando
@@ -84,6 +106,12 @@ class Simulador:
                 # servidor nao esta mais ocupado
                 self.servidor_ocupado = False
                 
+                # adicionando a lista de clientes atendidos
+                self.todos_clientes_atendidos.append(evento.cliente)
+                
+                # adicionando a lista de clientes atendidos nesta rodada
+                self.clientes_atendidos_rodada.append(evento.cliente)
+
                 if self.debug:
                     print 'Alguem saiu  %s as %f' % (evento.cliente, evento.quando)
             
@@ -107,4 +135,23 @@ class Simulador:
             except EOFError:
                 pass
 
-        self.imprimir_estado()
+    def tempo_medio_espera(self):
+        soma = reduce(lambda x, cliente: x + cliente.tempo_espera(), self.todos_clientes_atendidos, 0)
+        return soma / len(self.todos_clientes_atendidos)
+        
+    def tempo_medio_amostral(self):
+        return sum(self.amostras) / len(self.amostras)
+        
+    def desvio_padrao_amostral(self):
+        media = self.tempo_medio_amostral()
+        v = 0
+        
+        for amostra in self.amostras:
+            temp = amostra - media
+            temp = pow(temp, 2)
+            v = v + temp
+            
+        desvio = v / (len(self.amostras) - 1)
+        
+        return desvio
+        
