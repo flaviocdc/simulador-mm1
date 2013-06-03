@@ -14,7 +14,6 @@ for tx_chegada in txs_chegadas:
     print '- taxa de saida %f' % tx_saida
     
     sim = Simulador(tx_chegada, tx_saida)
-    sim.imprimir_estado()
     sim.simular()
     
     print 'Tempo medio de espera (somando o tempo de espera de todos os clientes): %f' % sim.tempo_medio_espera()

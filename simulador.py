@@ -4,25 +4,25 @@ from util import var_exp
 from exceptions import EOFError
 
 class Simulador:
-    tempo = 0.0
-    tx_chegada = 0.0
-    tx_saida = 0.0
-    eventos = []
-    fila = deque()
-    total_clientes = 0
-    servidor_ocupado = False
-    debug = False
-    
-    todos_clientes_atendidos = []
-    
-    amostras = []
-    clientes_atendidos_rodada = []
-    rodada = 0
     
     def __init__(self, tx_chegada, tx_saida):
         self.tx_chegada = tx_chegada
         self.tx_saida = tx_saida
-    
+
+        self.tempo = 0.0
+
+        self.eventos = []
+        self.fila = deque()
+        self.total_clientes = 0
+        self.servidor_ocupado = False
+        self.debug = False
+
+        self.todos_clientes_atendidos = []
+
+        self.amostras = []
+        self.clientes_atendidos_rodada = []
+        self.rodada = 0
+
     def inserir_ordenado(self, evento):
         self.eventos.append(evento)
         self.eventos = sorted(self.eventos, key=lambda evt: evt.quando)
@@ -55,6 +55,7 @@ class Simulador:
         print map(lambda client:'%s' % str(client), self.fila)
         print '- Amostras %s' % self.amostras
         print '- Rodada %d' % self.rodada
+        print '- Todos clientes atendidos: %d' % len(self.todos_clientes_atendidos)
         print '###################################'
     
     def simular(self):
@@ -66,7 +67,7 @@ class Simulador:
         primeiro_cliente = self.criar_novo_cliente()
         self.inserir_ordenado(self.gerar_proxima_chegada(primeiro_cliente))
         
-        while (self.tempo <= 10000):
+        while (self.tempo <= 100000):
             evento = self.eventos.pop(0)
             
             self.rodada = self.rodada + 1
