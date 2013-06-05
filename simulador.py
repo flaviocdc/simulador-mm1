@@ -29,11 +29,11 @@ class Simulador:
         
     def gerar_proxima_chegada(self, cliente):
         quando = self.tempo + var_exp(self.tx_chegada)
-        return EventoChegada(quando, cliente)
+        return EventoChegada(quando, cliente, self.rodada)
     
     def gerar_proxima_saida(self, cliente):
         quando = self.tempo + var_exp(self.tx_saida)
-        return EventoSaida(quando, cliente)
+        return EventoSaida(quando, cliente, self.rodada)
         
     def criar_novo_cliente(self):
         self.total_clientes = self.total_clientes + 1
