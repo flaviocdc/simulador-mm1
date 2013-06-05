@@ -1,11 +1,9 @@
 class Evento:
-    quando = 0
-    tipo = ''
-    cliente = None
     
-    def __init__(self, quando, cliente):
+    def __init__(self, quando, cliente, rodada):
         self.cliente = cliente
         self.quando = quando
+        self.rodada = rodada
 
 class EventoChegada(Evento):
     def __str__(self):
@@ -23,14 +21,12 @@ class EventoSaiuFila(Evento):
     def __str__(self):
         return 'EventoAdicionarFila[cliente=%s, quando=%f]' % (self.cliente, self.quando)
 
-class Cliente:
-    chegou = 0
-    atendido = 0
-    saiu = 0
-    nome = ''
-    
+class Cliente:    
     def __init__(self, nome):
         self.nome = 'Cliente-%d' % nome
+        self.chegou = 0
+        self.atendido = 0
+        self.saiu = 0
 
     def __str__(self):
         return self.nome
