@@ -166,7 +166,7 @@ class Simulador:
         x_barra = self.tempo_medio_formula()
         sigma = self.desvio_padrao_amostral()
         n = self.rodada
-        confianca = 1,96 # 95%
+        confianca = 1.96 # 95%
 
         temp = confianca * (sigma/sqrt(n))
 

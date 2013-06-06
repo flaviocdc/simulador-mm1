@@ -20,5 +20,7 @@ for tx_chegada in txs_chegadas:
     print 'Tempo medio de espera (calculado a partir de amostras): %f' % sim.tempo_medio_amostral()
     print 'Desvio-padrao amostral %f' % sim.desvio_padrao_amostral()
     print 'Tempo medio de espera (calculado a partir da formula (lambda / (mi * (mi - lambda))) ): %f' % sim.tempo_medio_formula()
+    intervalo = sim.intervalo_confianca()
+    print 'Intervalo de confianca (%f,%f) ' % (intervalo[0], intervalo[1])
 
     print '#####################################'
