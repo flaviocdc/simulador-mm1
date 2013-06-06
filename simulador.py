@@ -2,6 +2,7 @@ from collections import deque
 from eventos import *
 from util import var_exp
 from exceptions import EOFError
+from math import sqrt
 
 class Simulador:
     
@@ -67,12 +68,10 @@ class Simulador:
         primeiro_cliente = self.criar_novo_cliente()
         self.inserir_ordenado(self.gerar_proxima_chegada(primeiro_cliente))
         
-        while (self.tempo <= 100000):
+        while self.rodada != 30:
             evento = self.eventos.pop(0)
             
-            self.rodada = self.rodada + 1
-            
-            if self.rodada % 100 == 0:
+            if len(self.clientes_atendidos_rodada) >= 10000:
                 amostra = (reduce(lambda x, cliente: x + cliente.tempo_espera(), self.clientes_atendidos_rodada, 0)) / len(self.clientes_atendidos_rodada)
                 
                 # guardando a amostra
@@ -80,6 +79,10 @@ class Simulador:
                 
                 # limpando os clientes atendidos nesta rodada
                 self.clientes_atendidos_rodada = []
+
+                # proxima rodada
+                print 'Termino da rodada #%d' % self.rodada
+                self.rodada = self.rodada + 1
 
             if isinstance(evento, EventoChegada):
                 # avancando o tempo
@@ -143,6 +146,9 @@ class Simulador:
     def tempo_medio_amostral(self):
         return sum(self.amostras) / len(self.amostras)
         
+    def tempo_medio_formula(self):
+        return (self.tx_chegada / (self.tx_saida * (self.tx_saida - self.tx_chegada)))
+
     def desvio_padrao_amostral(self):
         media = self.tempo_medio_amostral()
         v = 0
@@ -154,5 +160,14 @@ class Simulador:
             
         desvio = v / (len(self.amostras) - 1)
         
-        return desvio
-        
+        return sqrt(desvio)
+
+    def intervalo_confianca(self):
+        x_barra = self.tempo_medio_formula()
+        sigma = self.desvio_padrao_amostral()
+        n = self.rodada
+        confianca = 1,96 # 95%
+
+        temp = confianca * (sigma/sqrt(n))
+
+        return (x_barra - temp, x_barra + temp)

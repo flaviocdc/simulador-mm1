@@ -19,9 +19,6 @@ for tx_chegada in txs_chegadas:
     print 'Tempo medio de espera (somando o tempo de espera de todos os clientes): %f' % sim.tempo_medio_espera()
     print 'Tempo medio de espera (calculado a partir de amostras): %f' % sim.tempo_medio_amostral()
     print 'Desvio-padrao amostral %f' % sim.desvio_padrao_amostral()
-    
-    formula = (sim.tx_chegada / (sim.tx_saida * (sim.tx_saida - sim.tx_chegada)))
-    
-    print 'Tempo medio de espera (calculado a partir da formula (lambda / (mi * (mi - lambda))) ): %f' % formula
+    print 'Tempo medio de espera (calculado a partir da formula (lambda / (mi * (mi - lambda))) ): %f' % sim.tempo_medio_formula()
 
     print '#####################################'
