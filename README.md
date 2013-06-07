@@ -1,27 +1,7 @@
-    ,-----.,--.                  ,--. ,---.   ,--.,------.  ,------.
-    '  .--./|  | ,---. ,--.,--. ,-|  || o   \  |  ||  .-.  \ |  .---'
-    |  |    |  || .-. ||  ||  |' .-. |`..'  |  |  ||  |  \  :|  `--, 
-    '  '--'\|  |' '-' ''  ''  '\ `-' | .'  /   |  ||  '--'  /|  `---.
-     `-----'`--' `---'  `----'  `---'  `--'    `--'`-------' `------'
-    ----------------------------------------------------------------- 
+# Simulador para uma fila M/M/1
 
+Este um simulador bem simples para uma fila M/M/1.
 
-Hi there! Welcome to Cloud9 IDE!
+O arquivo principal, onde toda logica do simulador se encontra é o __simulador.py__.
 
-To get you started, we have created a small hello world application.
-
-1) Open the hello-world.py file
-
-2) Follow the run instructions in the file's comments
-    
-And that's all there is to it! Just have fun. Go ahead and edit the code, 
-or add new files. It's all up to you! 
-
-Happy coding!
-The Cloud9 IDE team
-
-
-## Support & Documentation
-
-Visit http://docs.c9.io for documentation, or http://support.c9.io for support.
-To watch some training videos, visit http://www.youtube.com/user/c9ide
+Exemplos de como utilizar o simulador podem ser encotnrador no __main.py__
